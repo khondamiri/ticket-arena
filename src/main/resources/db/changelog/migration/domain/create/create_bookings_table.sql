@@ -1,0 +1,17 @@
+CREATE TABLE bookings
+(
+    id           BIGINT PRIMARY KEY NOT NULL,
+    public_id    UUID               NOT NULL,
+    user_id      BIGINT             NOT NULL REFERENCES users (id) ON DELETE RESTRICT,
+    event_id     BIGINT             NOT NULL REFERENCES events (id) ON DELETE RESTRICT,
+    status       VARCHAR(15)        NOT NULL CHECK ( status IN ('PENDING', 'CONFIRMED', 'CANCELLED', 'EXPIRED') ),
+    total_amount NUMERIC(10, 2)     NOT NULL CHECK ( total_amount >= 0 ),
+    expires_at   TIMESTAMPTZ        NOT NULL,
+    updated_at   TIMESTAMPTZ        NOT NULL DEFAULT NOW(),
+    created_at   TIMESTAMPTZ        NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX idx_bookings_id ON bookings (id);
+CREATE INDEX idx_bookings_public_id ON bookings (public_id);
+CREATE INDEX idx_bookings_expires_at ON bookings (expires_at);
+CREATE INDEX idx_bookings_composite_user_id_status ON bookings (user_id, status);
