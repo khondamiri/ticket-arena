@@ -10,3 +10,8 @@ services:
       - "5432:5432"
     volumes:
       - ./.db:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-d", "ticket_arena_db", "-U", "kei" ]
+      interval: 10s
+      timeout: 10s
+      retries: 3
