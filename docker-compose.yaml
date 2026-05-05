@@ -1,0 +1,12 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ticket_arena_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./.db:/var/lib/postgresql/data
