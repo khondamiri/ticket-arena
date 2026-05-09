@@ -34,15 +34,15 @@
                 relativeToChangelogFile="false"/>
     </changeSet>
 
-    <changeSet id="create-event-seats-table-05052026" author="khondamiri">
-        <sqlFile
-                path="/db/changelog/migration/domain/create/create_event_seats_table.sql"
-                relativeToChangelogFile="false"/>
-    </changeSet>
-
     <changeSet id="create-bookings-table-05052026" author="khondamiri">
         <sqlFile
                 path="/db/changelog/migration/domain/create/create_bookings_table.sql"
+                relativeToChangelogFile="false"/>
+    </changeSet>
+
+    <changeSet id="create-event-seats-table-05052026" author="khondamiri">
+        <sqlFile
+                path="/db/changelog/migration/domain/create/create_event_seats_table.sql"
                 relativeToChangelogFile="false"/>
     </changeSet>
 
