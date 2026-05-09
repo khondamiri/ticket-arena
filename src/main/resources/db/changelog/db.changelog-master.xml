@@ -7,12 +7,30 @@
     <changeSet id="0" author="admin">
     </changeSet>
 
-    <include created="05.05.2026" author="khondamiri" file="/db/changelog/migration/domain/create/create_users_table.sql"/>
-    <include created="05.05.2026" author="khondamiri" file="/db/changelog/migration/domain/create/create_venues_table.sql"/>
-    <include created="05.05.2026" author="khondamiri" file="/db/changelog/migration/domain/create/create_sections_table.sql"/>
-    <include created="05.05.2026" author="khondamiri" file="/db/changelog/migration/domain/create/create_seats_table.sql"/>
-    <include created="05.05.2026" author="khondamiri" file="/db/changelog/migration/domain/create/create_events_table.sql"/>
-    <include created="05.05.2026" author="khondamiri" file="/db/changelog/migration/domain/create/create_event_seats_table.sql"/>
-    <include created="05.05.2026" author="khondamiri" file="/db/changelog/migration/domain/create/create_tickets_table.sql"/>
-    <include created="05.05.2026" author="khondamiri" file="/db/changelog/migration/domain/create/create_payments_table.sql"/>
+    <include created="05.05.2026" author="khondamiri"
+             file="/db/changelog/migration/domain/create/create_users_table.sql"/>
+
+    <include created="05.05.2026" author="khondamiri"
+             file="/db/changelog/migration/domain/create/create_venues_table.sql"/>
+
+    <include created="05.05.2026" author="khondamiri"
+             file="/db/changelog/migration/domain/create/create_sections_table.sql"/>
+
+    <include created="05.05.2026" author="khondamiri"
+             file="/db/changelog/migration/domain/create/create_seats_table.sql"/>
+
+    <include created="05.05.2026" author="khondamiri"
+             file="/db/changelog/migration/domain/create/create_events_table.sql"/>
+
+    <include created="05.05.2026" author="khondamiri"
+             file="/db/changelog/migration/domain/create/create_event_seats_table.sql"/>
+
+    <include created="05.05.2026" author="khondamiri"
+             file="/db/changelog/migration/domain/create/create_bookings_table.sql"/>
+
+    <include created="05.05.2026" author="khondamiri"
+             file="/db/changelog/migration/domain/create/create_tickets_table.sql"/>
+
+    <include created="05.05.2026" author="khondamiri"
+             file="/db/changelog/migration/domain/create/create_payments_table.sql"/>
 </databaseChangeLog>

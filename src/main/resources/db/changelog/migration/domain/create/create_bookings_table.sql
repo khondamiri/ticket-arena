@@ -11,7 +11,7 @@ CREATE TABLE bookings
     created_at   TIMESTAMPTZ        NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX idx_bookings_id ON bookings (id);
+CREATE INDEX idx_bookings_event_id ON bookings (event_id);
 CREATE INDEX idx_bookings_public_id ON bookings (public_id);
 CREATE INDEX idx_bookings_expires_at ON bookings (expires_at);
 CREATE INDEX idx_bookings_composite_user_id_status ON bookings (user_id, status);

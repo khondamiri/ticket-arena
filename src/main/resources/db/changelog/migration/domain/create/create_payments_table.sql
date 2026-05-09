@@ -8,5 +8,3 @@ CREATE TABLE payments
     updated_at         TIMESTAMPTZ        NOT NULL DEFAULT NOW(),
     created_at         TIMESTAMPTZ        NOT NULL DEFAULT NOW()
 );
-
-CREATE INDEX idx_payments_id ON payments (id);

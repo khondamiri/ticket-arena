@@ -1,7 +1,7 @@
 CREATE TABLE tickets
 (
     id            BIGINT PRIMARY KEY NOT NULL,
-    public_id     UUID               NOT NULL,
+    public_id     UUID UNIQUE        NOT NULL,
     booking_id    BIGINT             NOT NULL REFERENCES bookings (id) ON DELETE RESTRICT,
     event_seat_id BIGINT             NOT NULL REFERENCES event_seats (id) ON DELETE RESTRICT,
     price_paid    NUMERIC(10, 2)     NOT NULL CHECK ( price_paid >= 0 ),
@@ -10,5 +10,6 @@ CREATE TABLE tickets
     deleted_at    TIMESTAMPTZ
 );
 
-CREATE INDEX idx_tickets_id ON tickets (id);
+CREATE INDEX idx_tickets_booking_id ON tickets (booking_id);
+CREATE INDEX idx_tickets_event_seat_id ON tickets (event_seat_id);
 CREATE INDEX idx_tickets_public_id ON tickets (public_id);

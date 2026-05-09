@@ -2,17 +2,15 @@ CREATE TABLE event_seats
 (
     id                   BIGINT PRIMARY KEY NOT NULL,
     event_id             BIGINT             NOT NULL REFERENCES events (id) ON DELETE CASCADE,
-    seat_id              UUID               NOT NULL REFERENCES seats (id) ON DELETE CASCADE,
+    seat_id              BIGINT             NOT NULL REFERENCES seats (id) ON DELETE CASCADE,
     status               VARCHAR(15)        NOT NULL CHECK ( status IN ('AVAILABLE', 'LOCKED', 'BOOKED') ),
     price                NUMERIC(10, 2)     NOT NULL CHECK ( price >= 0 ),
     locked_until         TIMESTAMPTZ,
-    locked_by_booking_id BIGINT             NULL,
-    version              INT,
+    locked_by_booking_id BIGINT             REFERENCES bookings (id) ON DELETE SET NULL,
+    version              INT                NOT NULL DEFAULT 0,
     updated_at           TIMESTAMPTZ        NOT NULL DEFAULT NOW(),
     created_at           TIMESTAMPTZ        NOT NULL DEFAULT NOW(),
     UNIQUE (event_id, seat_id)
 );
 
-CREATE INDEX idx_event_seats_id ON event_seats (id);
-CREATE INDEX idx_event_seats_composite_event_seat_id ON event_seats (event_id, seat_id);
 CREATE INDEX idx_event_seats_composite_event_status ON event_seats (event_id, status);
