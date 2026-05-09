@@ -4,9 +4,6 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <changeSet id="0" author="admin">
-    </changeSet>
-
     <changeSet id="create-users-table-05052026" author="khondamiri">
         <sqlFile
                 path="/db/changelog/migration/domain/create/create_users_table.sql"
