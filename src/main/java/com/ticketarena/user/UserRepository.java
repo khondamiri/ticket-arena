@@ -1,5 +1,6 @@
 package com.ticketarena.user;
 
+import com.ticketarena.common.exception.EntityNotFoundException;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -16,7 +17,7 @@ import java.util.UUID;
 
 @Repository
 public class UserRepository {
-    NamedParameterJdbcTemplate jdbc;
+    private final NamedParameterJdbcTemplate jdbc;
 
     public UserRepository( NamedParameterJdbcTemplate jdbcTemplate ) {
         this.jdbc = jdbcTemplate;
@@ -65,11 +66,11 @@ public class UserRepository {
     public Optional< User > findByPublicId( UUID publicId ) {
         String sql = """
                 SELECT * FROM users
-                WHERE public_id = :publicId::uuid
+                WHERE public_id = :publicId 
                 AND deleted_at IS NULL
                 """;
 
-        MapSqlParameterSource params = new MapSqlParameterSource( "publicId", publicId.toString() );
+        MapSqlParameterSource params = new MapSqlParameterSource( "publicId", publicId );
 
         List< User > users = jdbc.query( sql, params, ROW_MAPPER );
         User user = DataAccessUtils.singleResult( users );
@@ -118,7 +119,7 @@ public class UserRepository {
         int rowsAffected = jdbc.update( sql, params );
 
         if ( rowsAffected != 1 ) {
-            throw new RuntimeException( "ON UPDATE NO ROWS AFFECTED" );
+            throw new EntityNotFoundException("User not found with id: " + user.getId());
         }
     }
 
@@ -127,6 +128,7 @@ public class UserRepository {
                 UPDATE users
                 SET deleted_at = NOW()
                 WHERE id = :id
+                AND deleted_at IS NULL
                 """;
 
         MapSqlParameterSource params = new MapSqlParameterSource( "id", id );
@@ -134,11 +136,11 @@ public class UserRepository {
         int rowsAffected = jdbc.update( sql, params );
 
         if ( rowsAffected != 1 ) {
-            throw new RuntimeException( "ON DELETE NO ROWS AFFECTED" );
+            throw new EntityNotFoundException("User not found with id: " + id);
         }
     }
 
-    private final RowMapper< User > ROW_MAPPER = ( rs, rowNum ) -> {
+    private static final RowMapper< User > ROW_MAPPER = ( rs, rowNum ) -> {
         User user = new User();
         user.setId( rs.getLong( "id" ) );
         user.setPublicId( UUID.fromString( rs.getString( "public_id" ) ) );
