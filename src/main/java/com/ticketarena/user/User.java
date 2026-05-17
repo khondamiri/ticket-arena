@@ -1,11 +1,14 @@
 package com.ticketarena.user;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
-@Data
+@Setter
+@Getter
 public class User {
     private Long id;
     private UUID publicId;
