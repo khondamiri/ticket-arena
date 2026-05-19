@@ -39,7 +39,7 @@ public class UserRepository {
 
         jdbc.update( sql, params, keyHolder, new String[]{ "id" } );
 
-        user.setId( Objects.requireNonNull( keyHolder.getKey().longValue() ) );
+        user.setId( Objects.requireNonNull( keyHolder.getKey() ).longValue() );
 
         return user;
     }
