@@ -55,6 +55,7 @@ public class SeatRepository {
         String sql = """
                 SELECT * FROM seats
                 WHERE section_id = :sectionId
+                ORDER BY row_label, seat_number
                 """;
 
         MapSqlParameterSource params = new MapSqlParameterSource()
@@ -74,11 +75,7 @@ public class SeatRepository {
 
         Integer result = jdbc.queryForObject( sql, params, Integer.class );
 
-        if ( result != null ) {
-            return result;
-        } else {
-            throw new EntityNotFoundException( "Seats not found by SectionId: " + sectionId );
-        }
+        return result != null ? result : 0;
     }
 
     public void deleteBySectionId( Long sectionId ) {
@@ -90,10 +87,6 @@ public class SeatRepository {
                 .addValue( "sectionId", sectionId );
 
         int affected = jdbc.update( sql, params );
-
-        if ( affected == 0 ) {
-            throw new EntityNotFoundException( "Seats not found by SectionId: " + sectionId );
-        }
     }
 
     private static final RowMapper< Seat > SEAT_ROW_MAPPER = ( rs, rowNum ) -> {
