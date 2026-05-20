@@ -77,7 +77,6 @@ public class VenueRepository {
                     v.updated_at AS v_updated_at,
                     v.created_at AS v_created_at,
                     s.id AS s_id,
-                    s.venue_id AS s_venue_d,
                     s.name AS s_name,
                     s.display_order AS s_display_order,
                     s.created_at AS s_created_at
