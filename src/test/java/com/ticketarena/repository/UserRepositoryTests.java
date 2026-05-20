@@ -178,7 +178,7 @@ public class UserRepositoryTests extends BaseRepositoryTests {
         userRepository.save( user );
         userRepository.softDelete( user.getId() );
 
-        RowMapper< User > ROW_MAPPER = ( rs, rowNum) -> {
+        RowMapper< User > ROW_MAPPER = ( rs, rowNum ) -> {
             User rowUser = new User();
             rowUser.setDeletedAt( rs.getObject( "deleted_at", OffsetDateTime.class ) );
             return rowUser;

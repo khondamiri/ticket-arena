@@ -13,9 +13,12 @@ import org.testcontainers.postgresql.PostgreSQLContainer;
 @SpringBootTest
 @Testcontainers
 public abstract class BaseRepositoryTests {
-    @Container
-    static PostgreSQLContainer postgres =
-            new PostgreSQLContainer( "postgres:16" );
+    static final PostgreSQLContainer postgres;
+
+    static {
+        postgres = new PostgreSQLContainer("postgres:16");
+        postgres.start();
+    }
 
     @DynamicPropertySource
     static void configure( DynamicPropertyRegistry registry ) {
@@ -39,6 +42,4 @@ public abstract class BaseRepositoryTests {
         jdbc.execute( "DELETE FROM venues" );
         jdbc.execute( "DELETE FROM users" );
     }
-
-
 }

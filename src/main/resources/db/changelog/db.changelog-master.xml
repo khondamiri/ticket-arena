@@ -57,4 +57,10 @@
                 path="/db/changelog/migration/domain/create/create_payments_table.sql"
                 relativeToChangelogFile="false"/>
     </changeSet>
+
+    <changeSet id="update-venues-table-updated-at-19052026" author="khondamiri">
+        <sqlFile
+                path="/db/changelog/migration/domain/update/update_venues_table_updated_at.sql"
+                relativeToChangelogFile="false"/>
+    </changeSet>
 </databaseChangeLog>

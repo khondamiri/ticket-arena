@@ -1,0 +1,2 @@
+ALTER TABLE venues
+ADD COLUMN updated_at TIMESTAMPTZ;
