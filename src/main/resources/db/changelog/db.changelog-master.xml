@@ -63,4 +63,10 @@
                 path="/db/changelog/migration/domain/update/update_venues_table_updated_at.sql"
                 relativeToChangelogFile="false"/>
     </changeSet>
+
+    <changeSet id="update-venues-table-public-id-21052026" author="khondamiri">
+        <sqlFile
+                path="/db/changelog/migration/domain/update/update_venues_table_public_id.sql"
+                relativeToChangelogFile="false"/>
+    </changeSet>
 </databaseChangeLog>
