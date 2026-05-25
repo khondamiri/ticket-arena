@@ -24,9 +24,8 @@ public class VenueServiceTest extends BaseRepositoryTests {
     @Autowired
     private VenueService venueService;
 
-    private final String SECTION_NAME = "Iye";
-    private Integer SEAT_COUNT;
-
+    private final String SECTION_A_NAME = "Iye";
+    private final String SECTION_B_NAME = "bobo";
     private final String VENUE_NAME = "Alisher Navoiy Kinoteatri";
     private final String UPDATE_VENUE_NAME = "Inter Galaxy";
     private final String CITY = "Tashkent";
@@ -63,7 +62,10 @@ public class VenueServiceTest extends BaseRepositoryTests {
                 .isNotEmpty();
 
         assertThat( response.getSections().getFirst().getName() )
-                .isEqualTo( SECTION_NAME );
+                .isEqualTo( SECTION_A_NAME );
+
+        assertThat( response.getSections().get( 1 ).getName() )
+                .isEqualTo( SECTION_B_NAME );
     }
 
     @Test
@@ -71,7 +73,7 @@ public class VenueServiceTest extends BaseRepositoryTests {
         VenueResponse response = venueService.createVenueWithLayout( buildVenueRequest() );
 
         assertThat( response.getSections().getFirst().getSeatCount() )
-                .isEqualTo( SEAT_COUNT );
+                .isEqualTo( 4 );
     }
 
     @Test
@@ -140,14 +142,7 @@ public class VenueServiceTest extends BaseRepositoryTests {
 
     @Test
     void update_shouldThrow_whenNotFound() {
-        venueService.createVenueWithLayout( buildVenueRequest() );
-        UpdateVenueRequest request = new UpdateVenueRequest();
-        request.setName( UPDATE_VENUE_NAME );
-        request.setAddress( UPDATE_ADDRESS );
-        request.setCity( UPDATE_CITY );
-        request.setCountry( UPDATE_COUNTRY );
-
-        assertThatThrownBy( () -> venueService.update( 1234L, request ) )
+        assertThatThrownBy( () -> venueService.update( 1234L, new UpdateVenueRequest() ) )
                 .isInstanceOf( EntityNotFoundException.class );
     }
 
@@ -157,15 +152,17 @@ public class VenueServiceTest extends BaseRepositoryTests {
         CreateSeatRequest seatBOne = new CreateSeatRequest( "B", 1 );
         CreateSeatRequest seatBTwo = new CreateSeatRequest( "B", 2 );
 
-        List< CreateSeatRequest > seats = List.of( seatAOne, seatATwo, seatBOne, seatBTwo );
-
-        CreateSectionRequest sectionRequest = new CreateSectionRequest(
-                SECTION_NAME,
+        CreateSectionRequest sectionA = new CreateSectionRequest(
+                SECTION_A_NAME,
                 1,
-                seats
+                List.of( seatAOne, seatATwo, seatBOne, seatBTwo )
         );
 
-        SEAT_COUNT = seats.size();
+        CreateSectionRequest sectionB = new CreateSectionRequest(
+                SECTION_B_NAME,
+                10,
+                List.of( seatAOne, seatATwo, seatBOne )
+        );
 
         return new CreateVenueRequest(
                 VENUE_NAME,
@@ -173,7 +170,7 @@ public class VenueServiceTest extends BaseRepositoryTests {
                 COUNTRY,
                 ADDRESS,
                 TOTAL_CAPACITY,
-                List.of( sectionRequest )
+                List.of( sectionA, sectionB )
         );
     }
 }

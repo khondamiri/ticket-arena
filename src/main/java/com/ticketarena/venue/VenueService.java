@@ -6,7 +6,7 @@ import com.ticketarena.venue.dto.request.UpdateVenueRequest;
 import com.ticketarena.venue.dto.response.SectionResponse;
 import com.ticketarena.venue.dto.response.VenueResponse;
 import jakarta.validation.constraints.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,16 +15,12 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 @Transactional( readOnly = true )
 public class VenueService {
-    @Autowired
-    private VenueRepository venueRepository;
-
-    @Autowired
-    private SectionRepository sectionRepository;
-
-    @Autowired
-    private SeatRepository seatRepository;
+    private final VenueRepository venueRepository;
+    private final SectionRepository sectionRepository;
+    private final SeatRepository seatRepository;
 
     @Transactional
     public VenueResponse createVenueWithLayout( @NotNull CreateVenueRequest request ) {
@@ -90,7 +86,7 @@ public class VenueService {
 
     @Transactional
     public VenueResponse update( Long id, UpdateVenueRequest request ) {
-        Optional< Venue > venue = venueRepository.findByIdWithSections( id );
+        Optional< Venue > venue = venueRepository.findById( id );
 
         if ( venue.isEmpty() ) {
             throw new EntityNotFoundException( "Venue not found with id: " + id );

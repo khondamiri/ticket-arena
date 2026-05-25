@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public class VenueRepository {
@@ -69,6 +70,7 @@ public class VenueRepository {
         String sql = """
                 SELECT
                     v.id AS v_id,
+                    v.public_id AS v_public_id,
                     v.name AS v_name,
                     v.country AS v_country,
                     v.city AS v_city,
@@ -137,6 +139,7 @@ public class VenueRepository {
     private static final RowMapper< Venue > VENUE_ROW_MAPPER = ( rs, rowNum ) -> {
         Venue venue = new Venue();
         venue.setId( rs.getLong( "id" ) );
+        venue.setPublicId( rs.getObject( "public_id", UUID.class ) );
         venue.setName( rs.getString( "name" ) );
         venue.setCountry( rs.getString( "country" ) );
         venue.setCity( rs.getString( "city" ) );
@@ -155,7 +158,8 @@ public class VenueRepository {
 
             if ( !venueMap.containsKey( venueId ) ) {
                 Venue v = new Venue();
-                v.setId( rs.getLong( "v_id" ) );
+                v.setId( venueId );
+                v.setPublicId( rs.getObject( "v_public_id", UUID.class ) );
                 v.setName( rs.getString( "v_name" ) );
                 v.setCountry( rs.getString( "v_country" ) );
                 v.setCity( rs.getString( "v_city" ) );
