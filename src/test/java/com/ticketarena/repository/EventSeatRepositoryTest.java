@@ -1,6 +1,7 @@
 package com.ticketarena.repository;
 
 import com.ticketarena.common.BaseRepositoryTests;
+import com.ticketarena.common.exception.EntityNotFoundException;
 import com.ticketarena.event.Event;
 import com.ticketarena.event.EventRepository;
 import com.ticketarena.event.EventSeat;
@@ -24,7 +25,10 @@ import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -84,41 +88,301 @@ public class EventSeatRepositoryTest extends BaseRepositoryTests {
         }
 
         eventSeatRepository.saveAll( eventSeatList );
+    }
+
+    @Test
+    void findByEventId_shouldReturnAllSeats() {
+        User organizer = savedOrganizer();
+        Venue venue = savedVenueWithSectionAndSeats();
+
+        Event event = eventRepository.save(
+                Event.create(
+                        organizer.getId(),
+                        venue.getId(),
+                        "Iye",
+                        "Description",
+                        OffsetDateTime.now(),
+                        OffsetDateTime.now().plus( Duration.ofHours( 1 ) )
+                )
+        );
+
+        List< Section > section = sectionRepository.findByVenueId( venue.getId() );
+        List< Seat > seats = seatRepository.findBySectionId( section.getFirst().getId() );
+        List< EventSeat > eventSeatList = new ArrayList<>();
+
+        for ( Seat s : seats ) {
+            eventSeatList.add(
+                    EventSeat.create(
+                            event.getId(),
+                            s.getId(),
+                            EventSeatStatus.AVAILABLE,
+                            BigDecimal.valueOf( 50.00 ),
+                            null,
+                            null,
+                            0
+                    )
+            );
+        }
+
+        eventSeatRepository.saveAll( eventSeatList );
+
+        Map< Long, Long > eventSeatsMap = new HashMap<>();
+        eventSeatList.forEach( es -> eventSeatsMap.put( es.getSeatId(), es.getEventId() ) );
 
         List< EventSeat > savedEventSeats = eventSeatRepository.findByEventId( event.getId() );
 
         assertThat( savedEventSeats )
                 .isNotEmpty();
-    }
 
-    @Test
-    void findByEventId_shouldReturnAllSeats() {
-
+        for ( EventSeat ses : savedEventSeats ) {
+            assertThat( eventSeatsMap )
+                    .containsKey( ses.getSeatId() );
+        }
     }
 
     @Test
     void findAvailableByEventId_shouldReturnOnlyAvailableSeats() {
+        User organizer = savedOrganizer();
+        Venue venue = savedVenueWithSectionAndSeats();
 
+        Event event = eventRepository.save(
+                Event.create(
+                        organizer.getId(),
+                        venue.getId(),
+                        "Iye",
+                        "Description",
+                        OffsetDateTime.now(),
+                        OffsetDateTime.now().plus( Duration.ofHours( 1 ) )
+                )
+        );
+
+        List< Section > section = sectionRepository.findByVenueId( venue.getId() );
+        List< Seat > seats = seatRepository.findBySectionId( section.getFirst().getId() );
+        List< EventSeat > eventSeatList = new ArrayList<>();
+
+        for ( Seat s : seats ) {
+            eventSeatList.add(
+                    EventSeat.create(
+                            event.getId(),
+                            s.getId(),
+                            EventSeatStatus.AVAILABLE,
+                            BigDecimal.valueOf( 50.00 ),
+                            null,
+                            null,
+                            0
+                    )
+            );
+        }
+
+        eventSeatRepository.saveAll( eventSeatList );
+
+        List< EventSeat > available = eventSeatRepository.findAvailableByEventId( event.getId() );
+
+        assertThat( available )
+                .isNotEmpty();
+
+        assertThat( available.size() )
+                .isEqualTo( eventSeatList.size() );
     }
 
     @Test
     void findById_shouldReturnEventSeat_whenExists() {
+        User organizer = savedOrganizer();
+        Venue venue = savedVenueWithSectionAndSeats();
 
+        Event event = eventRepository.save(
+                Event.create(
+                        organizer.getId(),
+                        venue.getId(),
+                        "Iye",
+                        "Description",
+                        OffsetDateTime.now(),
+                        OffsetDateTime.now().plus( Duration.ofHours( 1 ) )
+                )
+        );
+
+        List< Section > section = sectionRepository.findByVenueId( venue.getId() );
+        List< Seat > seats = seatRepository.findBySectionId( section.getFirst().getId() );
+        List< EventSeat > eventSeatList = new ArrayList<>();
+
+        for ( Seat s : seats ) {
+            eventSeatList.add(
+                    EventSeat.create(
+                            event.getId(),
+                            s.getId(),
+                            EventSeatStatus.AVAILABLE,
+                            BigDecimal.valueOf( 50.00 ),
+                            null,
+                            null,
+                            0
+                    )
+            );
+        }
+
+        eventSeatRepository.saveAll( eventSeatList );
+
+        List< EventSeat > savedEventSeats = eventSeatRepository.findByEventId( event.getId() );
+
+        Optional< EventSeat > eventSeatById = eventSeatRepository.findById( savedEventSeats.getFirst().getId() );
+
+        assertThat( eventSeatById )
+                .isPresent();
+
+        assertThat( eventSeatById.get().getId() )
+                .isEqualTo( savedEventSeats.getFirst().getId() );
     }
 
     @Test
     void findByEventIdAndSeatId_shouldReturnEventSeat() {
+        User organizer = savedOrganizer();
+        Venue venue = savedVenueWithSectionAndSeats();
 
+        Event event = eventRepository.save(
+                Event.create(
+                        organizer.getId(),
+                        venue.getId(),
+                        "Iye",
+                        "Description",
+                        OffsetDateTime.now(),
+                        OffsetDateTime.now().plus( Duration.ofHours( 1 ) )
+                )
+        );
+
+        List< Section > section = sectionRepository.findByVenueId( venue.getId() );
+        List< Seat > seats = seatRepository.findBySectionId( section.getFirst().getId() );
+        List< EventSeat > eventSeatList = new ArrayList<>();
+
+        for ( Seat s : seats ) {
+            eventSeatList.add(
+                    EventSeat.create(
+                            event.getId(),
+                            s.getId(),
+                            EventSeatStatus.AVAILABLE,
+                            BigDecimal.valueOf( 50.00 ),
+                            null,
+                            null,
+                            0
+                    )
+            );
+        }
+
+        eventSeatRepository.saveAll( eventSeatList );
+
+        Optional< EventSeat > eventSeatById = eventSeatRepository.findByEventIdAndSeatId(
+                eventSeatList.getFirst().getEventId(),
+                eventSeatList.getFirst().getEventId()
+        );
+
+        assertThat( eventSeatById )
+                .isPresent();
+
+        assertThat( eventSeatById.get().getEventId() )
+                .isEqualTo( eventSeatList.getFirst().getEventId() );
+
+        assertThat( eventSeatById.get().getSeatId() )
+                .isEqualTo( eventSeatList.getFirst().getSeatId() );
     }
 
     @Test
     void update_shouldModifyEventSeatFields() {
+        User organizer = savedOrganizer();
+        Venue venue = savedVenueWithSectionAndSeats();
 
+        Event event = eventRepository.save(
+                Event.create(
+                        organizer.getId(),
+                        venue.getId(),
+                        "Iye",
+                        "Description",
+                        OffsetDateTime.now(),
+                        OffsetDateTime.now().plus( Duration.ofHours( 1 ) )
+                )
+        );
+
+        List< Section > section = sectionRepository.findByVenueId( venue.getId() );
+        List< Seat > seats = seatRepository.findBySectionId( section.getFirst().getId() );
+        List< EventSeat > eventSeatList = new ArrayList<>();
+
+        for ( Seat s : seats ) {
+            eventSeatList.add(
+                    EventSeat.create(
+                            event.getId(),
+                            s.getId(),
+                            EventSeatStatus.AVAILABLE,
+                            BigDecimal.valueOf( 50.00 ),
+                            null,
+                            null,
+                            0
+                    )
+            );
+        }
+
+        eventSeatRepository.saveAll( eventSeatList );
+
+        List< EventSeat > savedEventSeats = eventSeatRepository.findByEventId( event.getId() );
+
+        Long id = savedEventSeats.getFirst().getId();
+        Optional< EventSeat > eventSeatById = eventSeatRepository.findById( id );
+
+        EventSeat update = eventSeatById.orElseThrow( () -> new EntityNotFoundException( "EventSeat not found with id: " + id ) );
+        update.setStatus( EventSeatStatus.BOOKED );
+        update.setLockedUntil( OffsetDateTime.now().plus( Duration.ofDays( 10 ) ) );
+
+        eventSeatRepository.update( update );
+
+        Optional< EventSeat > eventSeatAfterUpdate = eventSeatRepository.findById( savedEventSeats.getFirst().getId() );
+        EventSeat afterUpdate = eventSeatAfterUpdate.orElseThrow( () -> new EntityNotFoundException( "EventSeat not found with id: " + id ) );
+
+        assertThat( afterUpdate.getStatus() )
+                .isNotEqualTo( update.getStatus() );
+
+        assertThat( afterUpdate.getId() )
+                .isEqualTo( update.getId() );
+
+        assertThat( afterUpdate.getVersion() )
+                .isNotEqualTo( update.getVersion() );
     }
 
     @Test
     void countAvailableByEventId_shouldReturnCorrectCount() {
+        User organizer = savedOrganizer();
+        Venue venue = savedVenueWithSectionAndSeats();
 
+        Event event = eventRepository.save(
+                Event.create(
+                        organizer.getId(),
+                        venue.getId(),
+                        "Iye",
+                        "Description",
+                        OffsetDateTime.now(),
+                        OffsetDateTime.now().plus( Duration.ofHours( 1 ) )
+                )
+        );
+
+        List< Section > section = sectionRepository.findByVenueId( venue.getId() );
+        List< Seat > seats = seatRepository.findBySectionId( section.getFirst().getId() );
+        List< EventSeat > eventSeatList = new ArrayList<>();
+
+        for ( Seat s : seats ) {
+            eventSeatList.add(
+                    EventSeat.create(
+                            event.getId(),
+                            s.getId(),
+                            EventSeatStatus.AVAILABLE,
+                            BigDecimal.valueOf( 50.00 ),
+                            null,
+                            null,
+                            0
+                    )
+            );
+        }
+
+        eventSeatRepository.saveAll( eventSeatList );
+
+        int result = eventSeatRepository.countAvailableByEventId( event.getId() );
+
+        assertThat( result )
+                .isEqualTo( eventSeatList.size() );
     }
 
     private User savedOrganizer() {
