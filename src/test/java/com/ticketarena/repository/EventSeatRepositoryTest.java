@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -270,7 +271,7 @@ public class EventSeatRepositoryTest extends BaseRepositoryTests {
 
         Optional< EventSeat > eventSeatById = eventSeatRepository.findByEventIdAndSeatId(
                 eventSeatList.getFirst().getEventId(),
-                eventSeatList.getFirst().getEventId()
+                eventSeatList.getFirst().getSeatId()
         );
 
         assertThat( eventSeatById )
@@ -311,11 +312,24 @@ public class EventSeatRepositoryTest extends BaseRepositoryTests {
                             EventSeatStatus.AVAILABLE,
                             BigDecimal.valueOf( 50.00 ),
                             null,
-                            null,
+                            1L,
                             0
                     )
             );
         }
+
+        String sql = """
+        INSERT INTO bookings (public_id, user_id, event_id, status, total_amount, expires_at)
+        VALUES (?, ?, ?, ?, ?, NOW())
+        """;
+
+        jdbc.update(sql,
+                UUID.randomUUID(),
+                organizer.getId(),
+                event.getId(),
+                "PENDING",
+                100
+        );
 
         eventSeatRepository.saveAll( eventSeatList );
 
@@ -334,13 +348,13 @@ public class EventSeatRepositoryTest extends BaseRepositoryTests {
         EventSeat afterUpdate = eventSeatAfterUpdate.orElseThrow( () -> new EntityNotFoundException( "EventSeat not found with id: " + id ) );
 
         assertThat( afterUpdate.getStatus() )
-                .isNotEqualTo( update.getStatus() );
+                .isNotEqualTo( savedEventSeats.getFirst().getStatus() );
 
         assertThat( afterUpdate.getId() )
                 .isEqualTo( update.getId() );
 
         assertThat( afterUpdate.getVersion() )
-                .isNotEqualTo( update.getVersion() );
+                .isNotEqualTo( savedEventSeats.getFirst().getVersion() );
     }
 
     @Test
