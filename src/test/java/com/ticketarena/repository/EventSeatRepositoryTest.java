@@ -58,74 +58,27 @@ public class EventSeatRepositoryTest extends BaseRepositoryTests {
     void saveAll_shouldPersistEventSeats() {
         User organizer = savedOrganizer();
         Venue venue = savedVenueWithSectionAndSeats();
-
-        Event event = eventRepository.save(
-                Event.create(
-                        organizer.getId(),
-                        venue.getId(),
-                        "Iye",
-                        "Description",
-                        OffsetDateTime.now(),
-                        OffsetDateTime.now().plus( Duration.ofHours( 1 ) )
-                )
-        );
+        Event event = savedEvent( organizer, venue );
 
         List< Section > section = sectionRepository.findByVenueId( venue.getId() );
         List< Seat > seats = seatRepository.findBySectionId( section.getFirst().getId() );
-        List< EventSeat > eventSeatList = new ArrayList<>();
+        List< EventSeat > eventSeatList = savedEventSeats(section, seats, seats, event);
 
-        for ( Seat s : seats ) {
-            eventSeatList.add(
-                    EventSeat.create(
-                            event.getId(),
-                            s.getId(),
-                            EventSeatStatus.AVAILABLE,
-                            BigDecimal.valueOf( 50.00 ),
-                            null,
-                            null,
-                            0
-                    )
-            );
-        }
+        List< EventSeat > saved = eventSeatRepository.findByEventId( event.getId() );
 
-        eventSeatRepository.saveAll( eventSeatList );
+        assertThat( saved )
+                .hasSize( eventSeatList.size() );
     }
 
     @Test
     void findByEventId_shouldReturnAllSeats() {
         User organizer = savedOrganizer();
         Venue venue = savedVenueWithSectionAndSeats();
-
-        Event event = eventRepository.save(
-                Event.create(
-                        organizer.getId(),
-                        venue.getId(),
-                        "Iye",
-                        "Description",
-                        OffsetDateTime.now(),
-                        OffsetDateTime.now().plus( Duration.ofHours( 1 ) )
-                )
-        );
+        Event event = savedEvent( organizer, venue );
 
         List< Section > section = sectionRepository.findByVenueId( venue.getId() );
         List< Seat > seats = seatRepository.findBySectionId( section.getFirst().getId() );
-        List< EventSeat > eventSeatList = new ArrayList<>();
-
-        for ( Seat s : seats ) {
-            eventSeatList.add(
-                    EventSeat.create(
-                            event.getId(),
-                            s.getId(),
-                            EventSeatStatus.AVAILABLE,
-                            BigDecimal.valueOf( 50.00 ),
-                            null,
-                            null,
-                            0
-                    )
-            );
-        }
-
-        eventSeatRepository.saveAll( eventSeatList );
+        List< EventSeat > eventSeatList = savedEventSeats(section, seats, seats, event);
 
         Map< Long, Long > eventSeatsMap = new HashMap<>();
         eventSeatList.forEach( es -> eventSeatsMap.put( es.getSeatId(), es.getEventId() ) );
@@ -146,36 +99,11 @@ public class EventSeatRepositoryTest extends BaseRepositoryTests {
         User organizer = savedOrganizer();
         Venue venue = savedVenueWithSectionAndSeats();
 
-        Event event = eventRepository.save(
-                Event.create(
-                        organizer.getId(),
-                        venue.getId(),
-                        "Iye",
-                        "Description",
-                        OffsetDateTime.now(),
-                        OffsetDateTime.now().plus( Duration.ofHours( 1 ) )
-                )
-        );
+        Event event = savedEvent( organizer, venue );
 
         List< Section > section = sectionRepository.findByVenueId( venue.getId() );
         List< Seat > seats = seatRepository.findBySectionId( section.getFirst().getId() );
-        List< EventSeat > eventSeatList = new ArrayList<>();
-
-        for ( Seat s : seats ) {
-            eventSeatList.add(
-                    EventSeat.create(
-                            event.getId(),
-                            s.getId(),
-                            EventSeatStatus.AVAILABLE,
-                            BigDecimal.valueOf( 50.00 ),
-                            null,
-                            null,
-                            0
-                    )
-            );
-        }
-
-        eventSeatRepository.saveAll( eventSeatList );
+        List< EventSeat > eventSeatList = savedEventSeats(section, seats, seats, event);
 
         List< EventSeat > available = eventSeatRepository.findAvailableByEventId( event.getId() );
 
@@ -191,36 +119,12 @@ public class EventSeatRepositoryTest extends BaseRepositoryTests {
         User organizer = savedOrganizer();
         Venue venue = savedVenueWithSectionAndSeats();
 
-        Event event = eventRepository.save(
-                Event.create(
-                        organizer.getId(),
-                        venue.getId(),
-                        "Iye",
-                        "Description",
-                        OffsetDateTime.now(),
-                        OffsetDateTime.now().plus( Duration.ofHours( 1 ) )
-                )
-        );
+        Event event = savedEvent( organizer, venue );
 
         List< Section > section = sectionRepository.findByVenueId( venue.getId() );
         List< Seat > seats = seatRepository.findBySectionId( section.getFirst().getId() );
-        List< EventSeat > eventSeatList = new ArrayList<>();
 
-        for ( Seat s : seats ) {
-            eventSeatList.add(
-                    EventSeat.create(
-                            event.getId(),
-                            s.getId(),
-                            EventSeatStatus.AVAILABLE,
-                            BigDecimal.valueOf( 50.00 ),
-                            null,
-                            null,
-                            0
-                    )
-            );
-        }
-
-        eventSeatRepository.saveAll( eventSeatList );
+        savedEventSeats(section, seats, seats, event);
 
         List< EventSeat > savedEventSeats = eventSeatRepository.findByEventId( event.getId() );
 
@@ -238,36 +142,11 @@ public class EventSeatRepositoryTest extends BaseRepositoryTests {
         User organizer = savedOrganizer();
         Venue venue = savedVenueWithSectionAndSeats();
 
-        Event event = eventRepository.save(
-                Event.create(
-                        organizer.getId(),
-                        venue.getId(),
-                        "Iye",
-                        "Description",
-                        OffsetDateTime.now(),
-                        OffsetDateTime.now().plus( Duration.ofHours( 1 ) )
-                )
-        );
+        Event event = savedEvent( organizer, venue );
 
         List< Section > section = sectionRepository.findByVenueId( venue.getId() );
         List< Seat > seats = seatRepository.findBySectionId( section.getFirst().getId() );
-        List< EventSeat > eventSeatList = new ArrayList<>();
-
-        for ( Seat s : seats ) {
-            eventSeatList.add(
-                    EventSeat.create(
-                            event.getId(),
-                            s.getId(),
-                            EventSeatStatus.AVAILABLE,
-                            BigDecimal.valueOf( 50.00 ),
-                            null,
-                            null,
-                            0
-                    )
-            );
-        }
-
-        eventSeatRepository.saveAll( eventSeatList );
+        List< EventSeat > eventSeatList = savedEventSeats(section, seats, seats, event);
 
         Optional< EventSeat > eventSeatById = eventSeatRepository.findByEventIdAndSeatId(
                 eventSeatList.getFirst().getEventId(),
@@ -289,49 +168,25 @@ public class EventSeatRepositoryTest extends BaseRepositoryTests {
         User organizer = savedOrganizer();
         Venue venue = savedVenueWithSectionAndSeats();
 
-        Event event = eventRepository.save(
-                Event.create(
-                        organizer.getId(),
-                        venue.getId(),
-                        "Iye",
-                        "Description",
-                        OffsetDateTime.now(),
-                        OffsetDateTime.now().plus( Duration.ofHours( 1 ) )
-                )
-        );
+        Event event = savedEvent( organizer, venue );
 
         List< Section > section = sectionRepository.findByVenueId( venue.getId() );
         List< Seat > seats = seatRepository.findBySectionId( section.getFirst().getId() );
-        List< EventSeat > eventSeatList = new ArrayList<>();
 
-        for ( Seat s : seats ) {
-            eventSeatList.add(
-                    EventSeat.create(
-                            event.getId(),
-                            s.getId(),
-                            EventSeatStatus.AVAILABLE,
-                            BigDecimal.valueOf( 50.00 ),
-                            null,
-                            1L,
-                            0
-                    )
-            );
-        }
+        savedEventSeats(section, seats, seats, event);
 
         String sql = """
-        INSERT INTO bookings (public_id, user_id, event_id, status, total_amount, expires_at)
-        VALUES (?, ?, ?, ?, ?, NOW())
-        """;
+                INSERT INTO bookings (public_id, user_id, event_id, status, total_amount, expires_at)
+                VALUES (?, ?, ?, ?, ?, NOW())
+                """;
 
-        jdbc.update(sql,
+        jdbc.update( sql,
                 UUID.randomUUID(),
                 organizer.getId(),
                 event.getId(),
                 "PENDING",
                 100
         );
-
-        eventSeatRepository.saveAll( eventSeatList );
 
         List< EventSeat > savedEventSeats = eventSeatRepository.findByEventId( event.getId() );
 
@@ -362,36 +217,11 @@ public class EventSeatRepositoryTest extends BaseRepositoryTests {
         User organizer = savedOrganizer();
         Venue venue = savedVenueWithSectionAndSeats();
 
-        Event event = eventRepository.save(
-                Event.create(
-                        organizer.getId(),
-                        venue.getId(),
-                        "Iye",
-                        "Description",
-                        OffsetDateTime.now(),
-                        OffsetDateTime.now().plus( Duration.ofHours( 1 ) )
-                )
-        );
+        Event event = savedEvent( organizer, venue );
 
         List< Section > section = sectionRepository.findByVenueId( venue.getId() );
         List< Seat > seats = seatRepository.findBySectionId( section.getFirst().getId() );
-        List< EventSeat > eventSeatList = new ArrayList<>();
-
-        for ( Seat s : seats ) {
-            eventSeatList.add(
-                    EventSeat.create(
-                            event.getId(),
-                            s.getId(),
-                            EventSeatStatus.AVAILABLE,
-                            BigDecimal.valueOf( 50.00 ),
-                            null,
-                            null,
-                            0
-                    )
-            );
-        }
-
-        eventSeatRepository.saveAll( eventSeatList );
+        List< EventSeat > eventSeatList = savedEventSeats(section, seats, seats, event);
 
         int result = eventSeatRepository.countAvailableByEventId( event.getId() );
 
@@ -402,6 +232,19 @@ public class EventSeatRepositoryTest extends BaseRepositoryTests {
     private User savedOrganizer() {
         return userRepository.save(
                 User.create( "organizer@test.com", "password", "Organizer", UserRole.ORGANIZER )
+        );
+    }
+
+    private Event savedEvent( User organizer, Venue venue ) {
+        return eventRepository.save(
+                Event.create(
+                        organizer.getId(),
+                        venue.getId(),
+                        "Iye",
+                        "Description",
+                        OffsetDateTime.now(),
+                        OffsetDateTime.now().plus( Duration.ofHours( 1 ) )
+                )
         );
     }
 
@@ -427,5 +270,27 @@ public class EventSeatRepositoryTest extends BaseRepositoryTests {
         seatRepository.save( Seat.create( savedSection.getId(), "B", 5 ) );
 
         return savedVenue;
+    }
+
+    private List< EventSeat> savedEventSeats( List< Section > section, List< Seat > seats, List< Seat > seatList, Event event ) {
+        List< EventSeat > eventSeatList = new ArrayList<>();
+
+        for ( Seat s : seats ) {
+            eventSeatList.add(
+                    EventSeat.create(
+                            event.getId(),
+                            s.getId(),
+                            EventSeatStatus.AVAILABLE,
+                            BigDecimal.valueOf( 50.00 ),
+                            null,
+                            null,
+                            0
+                    )
+            );
+        }
+
+        eventSeatRepository.saveAll( eventSeatList );
+
+        return eventSeatList;
     }
 }

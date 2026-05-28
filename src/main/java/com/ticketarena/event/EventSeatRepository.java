@@ -29,7 +29,7 @@ public class EventSeatRepository {
 
         for ( int i = 0; i < eventSeats.size(); i++ ) {
             EventSeat es = eventSeats.get( i );
-            batch[i] = new MapSqlParameterSource()
+            batch[ i ] = new MapSqlParameterSource()
                     .addValue( "eventId", es.getEventId() )
                     .addValue( "seatId", es.getSeatId() )
                     .addValue( "status", es.getStatus().name() )
@@ -59,7 +59,7 @@ public class EventSeatRepository {
                 SELECT *
                 FROM event_seats
                 WHERE event_id = :eventId AND
-                      status LIKE :status
+                      status = :status
                 """;
 
         MapSqlParameterSource params = new MapSqlParameterSource()
@@ -136,11 +136,13 @@ public class EventSeatRepository {
     public int countAvailableByEventId( Long eventId ) {
         String sql = """
                 SELECT COUNT(*) FROM event_seats
-                WHERE event_id = :eventId
+                WHERE event_id = :eventId AND
+                      status = :status
                 """;
 
         MapSqlParameterSource params = new MapSqlParameterSource()
-                .addValue( "eventId", eventId );
+                .addValue( "eventId", eventId )
+                .addValue( "status", EventSeatStatus.AVAILABLE.name() );
 
         Integer result = jdbc.queryForObject( sql, params, Integer.class );
 
@@ -155,7 +157,7 @@ public class EventSeatRepository {
         es.setStatus( EventSeatStatus.valueOf( rs.getString( "status" ) ) );
         es.setPrice( rs.getBigDecimal( "price" ) );
         es.setLockedUntil( rs.getObject( "locked_until", OffsetDateTime.class ) );
-        es.setLockedByBookingId( rs.getLong( "locked_by_booking_id" ) );
+        es.setLockedByBookingId( rs.getObject( "locked_by_booking_id", Long.class ) );
         es.setVersion( rs.getInt( "version" ) );
         es.setUpdatedAt( rs.getObject( "updated_at", OffsetDateTime.class ) );
         es.setCreatedAt( rs.getObject( "created_at", OffsetDateTime.class ) );

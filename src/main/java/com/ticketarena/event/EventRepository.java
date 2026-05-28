@@ -1,5 +1,6 @@
 package com.ticketarena.event;
 
+import com.ticketarena.common.exception.EntityNotFoundException;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -40,7 +42,7 @@ public class EventRepository {
 
         jdbc.update( sql, params, keyHolder, new String[]{ "id" } );
 
-        event.setId( (Long) keyHolder.getKeys().get( "id" ) );
+        event.setId( Objects.requireNonNull( keyHolder.getKey() ).longValue() );
 
         return event;
     }
@@ -138,7 +140,11 @@ public class EventRepository {
                 .addValue( "id", id )
                 .addValue( "newStatus", newStatus.name() );
 
-        jdbc.update( sql, params );
+        int affected = jdbc.update( sql, params );
+
+        if ( affected != 1 ) {
+            throw new EntityNotFoundException( "Entity not found with id: " + id );
+        }
     }
 
     public void update( Event event ) {
