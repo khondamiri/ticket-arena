@@ -39,4 +39,8 @@ public class EventSeat {
         eventSeat.setVersion( version );
         return eventSeat;
     }
+
+    public void incrementVersion() {
+        this.version += 1;
+    }
 }

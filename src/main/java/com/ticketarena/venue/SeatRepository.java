@@ -1,6 +1,5 @@
 package com.ticketarena.venue;
 
-import com.ticketarena.common.exception.EntityNotFoundException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -86,7 +85,28 @@ public class SeatRepository {
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue( "sectionId", sectionId );
 
-        int affected = jdbc.update( sql, params );
+        jdbc.update( sql, params );
+    }
+
+    public String findSeatLabelByEventSeatId( Long eventSeatId ) {
+        String sql = """
+                SELECT
+                    concat_ws(
+                        ' ',
+                        sc.name,
+                        st.row_label,
+                        st.seat_number
+                    )
+                FROM event_seats as es
+                JOIN seats AS st ON st.id = es.seat_id
+                JOIN sections AS sc ON sc.id = st.section_id
+                WHERE es.id = :eventSeatId
+                """;
+
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue( "eventSeatId", eventSeatId );
+
+        return jdbc.queryForObject( sql, params, String.class );
     }
 
     private static final RowMapper< Seat > SEAT_ROW_MAPPER = ( rs, rowNum ) -> {

@@ -128,7 +128,7 @@ public class EventSeatRepository {
                 .addValue( "status", eventSeat.getStatus().name() )
                 .addValue( "lockedUntil", eventSeat.getLockedUntil() )
                 .addValue( "lockedByBookingId", eventSeat.getLockedByBookingId() )
-                .addValue( "version", eventSeat.getVersion() + 1 );
+                .addValue( "version", eventSeat.getVersion() );
 
         jdbc.update( sql, params );
     }
@@ -147,6 +147,29 @@ public class EventSeatRepository {
         Integer result = jdbc.queryForObject( sql, params, Integer.class );
 
         return result != null ? result : 0;
+    }
+
+    // This is the money method — FOR UPDATE NOWAIT
+    // Returns the seat locked for update, or throws if already locked
+    // TODO finish FOR UPDATE method
+    public Optional<EventSeat> findByIdForUpdate(Long id) {
+        String sql = """
+                SELECT *
+                FROM event_seats
+                WHERE id = :id
+                FOR UPDATE NOWAIT
+                """;
+
+        MapSqlParameterSource params = new MapSqlParameterSource( "id", id );
+
+        List< EventSeat > eventSeatList = jdbc.query( sql, params, EVENT_SEAT_ROW_MAPPER );
+        EventSeat eventSeat = DataAccessUtils.singleResult( eventSeatList );
+
+        if ( eventSeat != null ) {
+            return Optional.of( eventSeat );
+        } else {
+            return Optional.empty();
+        }
     }
 
     private static final RowMapper< EventSeat > EVENT_SEAT_ROW_MAPPER = ( rs, rowNum ) -> {

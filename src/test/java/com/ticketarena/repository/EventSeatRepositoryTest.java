@@ -62,7 +62,7 @@ public class EventSeatRepositoryTest extends BaseRepositoryTests {
 
         List< Section > section = sectionRepository.findByVenueId( venue.getId() );
         List< Seat > seats = seatRepository.findBySectionId( section.getFirst().getId() );
-        List< EventSeat > eventSeatList = savedEventSeats(section, seats, seats, event);
+        List< EventSeat > eventSeatList = savedEventSeats( seats, event );
 
         List< EventSeat > saved = eventSeatRepository.findByEventId( event.getId() );
 
@@ -78,7 +78,7 @@ public class EventSeatRepositoryTest extends BaseRepositoryTests {
 
         List< Section > section = sectionRepository.findByVenueId( venue.getId() );
         List< Seat > seats = seatRepository.findBySectionId( section.getFirst().getId() );
-        List< EventSeat > eventSeatList = savedEventSeats(section, seats, seats, event);
+        List< EventSeat > eventSeatList = savedEventSeats( seats, event );
 
         Map< Long, Long > eventSeatsMap = new HashMap<>();
         eventSeatList.forEach( es -> eventSeatsMap.put( es.getSeatId(), es.getEventId() ) );
@@ -103,7 +103,7 @@ public class EventSeatRepositoryTest extends BaseRepositoryTests {
 
         List< Section > section = sectionRepository.findByVenueId( venue.getId() );
         List< Seat > seats = seatRepository.findBySectionId( section.getFirst().getId() );
-        List< EventSeat > eventSeatList = savedEventSeats(section, seats, seats, event);
+        List< EventSeat > eventSeatList = savedEventSeats( seats, event );
 
         List< EventSeat > available = eventSeatRepository.findAvailableByEventId( event.getId() );
 
@@ -124,7 +124,7 @@ public class EventSeatRepositoryTest extends BaseRepositoryTests {
         List< Section > section = sectionRepository.findByVenueId( venue.getId() );
         List< Seat > seats = seatRepository.findBySectionId( section.getFirst().getId() );
 
-        savedEventSeats(section, seats, seats, event);
+        savedEventSeats( seats, event );
 
         List< EventSeat > savedEventSeats = eventSeatRepository.findByEventId( event.getId() );
 
@@ -146,7 +146,7 @@ public class EventSeatRepositoryTest extends BaseRepositoryTests {
 
         List< Section > section = sectionRepository.findByVenueId( venue.getId() );
         List< Seat > seats = seatRepository.findBySectionId( section.getFirst().getId() );
-        List< EventSeat > eventSeatList = savedEventSeats(section, seats, seats, event);
+        List< EventSeat > eventSeatList = savedEventSeats( seats, event );
 
         Optional< EventSeat > eventSeatById = eventSeatRepository.findByEventIdAndSeatId(
                 eventSeatList.getFirst().getEventId(),
@@ -173,7 +173,7 @@ public class EventSeatRepositoryTest extends BaseRepositoryTests {
         List< Section > section = sectionRepository.findByVenueId( venue.getId() );
         List< Seat > seats = seatRepository.findBySectionId( section.getFirst().getId() );
 
-        savedEventSeats(section, seats, seats, event);
+        savedEventSeats( seats, event );
 
         String sql = """
                 INSERT INTO bookings (public_id, user_id, event_id, status, total_amount, expires_at)
@@ -221,7 +221,7 @@ public class EventSeatRepositoryTest extends BaseRepositoryTests {
 
         List< Section > section = sectionRepository.findByVenueId( venue.getId() );
         List< Seat > seats = seatRepository.findBySectionId( section.getFirst().getId() );
-        List< EventSeat > eventSeatList = savedEventSeats(section, seats, seats, event);
+        List< EventSeat > eventSeatList = savedEventSeats( seats, event );
 
         int result = eventSeatRepository.countAvailableByEventId( event.getId() );
 
@@ -272,7 +272,7 @@ public class EventSeatRepositoryTest extends BaseRepositoryTests {
         return savedVenue;
     }
 
-    private List< EventSeat> savedEventSeats( List< Section > section, List< Seat > seats, List< Seat > seatList, Event event ) {
+    private List< EventSeat > savedEventSeats( List< Seat > seats, Event event ) {
         List< EventSeat > eventSeatList = new ArrayList<>();
 
         for ( Seat s : seats ) {
