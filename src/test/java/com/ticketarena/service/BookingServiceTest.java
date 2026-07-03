@@ -116,6 +116,27 @@ public class BookingServiceTest extends BaseRepositoryTests {
     }
 
     @Test
+    void initiateBooking_shouldPreventSecondBooking_whenCalledSequentially() {
+        List<User> users = savedCustomers();
+        User organizer = savedOrganizer();
+        Venue venue = savedVenueWithSectionAndSeats();
+        Event event = savedEvent(organizer, venue);
+
+        List<Section> section = sectionRepository.findByVenueId(venue.getId());
+        List<Seat> seats = seatRepository.findBySectionId(section.getFirst().getId());
+
+        savedEventSeats(seats, event);
+        List<EventSeat> eventSeatList = eventSeatRepository.findByEventId(event.getId());
+        Long eventSeatId = eventSeatList.getFirst().getId();
+
+        bookingService.initiateBooking(new InitiateBookingRequest(eventSeatId, users.getFirst().getId()));
+
+        assertThatThrownBy(() ->
+                bookingService.initiateBooking(new InitiateBookingRequest(eventSeatId, users.get(1).getId()))
+        ).isInstanceOf(SeatNotAvailableException.class);
+    }
+
+    @Test
     void confirmBooking_shouldSetStatusConfirmed() {
         List< User > users = savedCustomers();
         User customer = users.getFirst();
