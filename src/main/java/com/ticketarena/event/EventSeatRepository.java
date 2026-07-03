@@ -149,9 +149,6 @@ public class EventSeatRepository {
         return result != null ? result : 0;
     }
 
-    // This is the money method — FOR UPDATE NOWAIT
-    // Returns the seat locked for update, or throws if already locked
-    // TODO finish FOR UPDATE method
     public Optional<EventSeat> findByIdForUpdate(Long id) {
         String sql = """
                 SELECT *
