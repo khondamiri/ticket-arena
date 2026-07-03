@@ -25,8 +25,6 @@ import com.ticketarena.venue.VenueRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.dao.TransientDataAccessException;
-import org.springframework.jdbc.UncategorizedSQLException;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.math.BigDecimal;
@@ -100,10 +98,7 @@ public class BookingServiceTest extends BaseRepositoryTests {
                         );
 
                         success.incrementAndGet();
-                    } catch (
-                            TransientDataAccessException | SeatLockedException |
-                            SeatNotAvailableException | UncategorizedSQLException e
-                    ) {
+                    } catch ( SeatLockedException | SeatNotAvailableException e ) {
                         failure.incrementAndGet();
                     } finally {
                         latch.countDown();

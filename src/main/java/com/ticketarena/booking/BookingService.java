@@ -14,6 +14,7 @@ import com.ticketarena.event.EventSeatStatus;
 import com.ticketarena.venue.SeatRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.CannotAcquireLockException;
+import org.springframework.jdbc.UncategorizedSQLException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -72,6 +73,8 @@ public class BookingService {
             es.setLockedByBookingId( b.getId() );
             es.incrementVersion();
 
+            eventSeatRepository.update(es);
+
             return BookingResponse.builder()
                     .id(b.getId())
                     .publicId(b.getPublicId())
@@ -87,8 +90,8 @@ public class BookingService {
                                     .build() )
                     )
                     .build();
-        } catch ( CannotAcquireLockException e ) {
-            throw new SeatLockedException( e.getMessage() );
+        } catch ( CannotAcquireLockException | UncategorizedSQLException e ) {
+            throw new SeatLockedException( "Seat is currently being booked by another user; " + e.getMessage() );
         }
     }
 
